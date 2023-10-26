@@ -1,0 +1,65 @@
+jsonString to POST to API (https://SmartHouseAPI.slettebakk.com/api/TemperatureSensors) endpoint:
+{
+	"sensorTankTimeStamp": "2023-09-26T10:34:45.482360",
+	"sensorTankTemp": 39.625,
+	"sensorVpTurTemp": 27.312,
+	"sensorVpReturTemp": 27.187,
+	"sensorGulvTurTankTemp": 37.187,
+	"sensorGulvReturTankTemp": 34.375,
+	"indorTemperature": 23.3,
+	"outdorTemperature": 13.9
+}
+POST HTTPSResult=201
+URI to Location id=https://smarthouseapi.slettebakk.com/api/TemperatureSensors/0e31cb0c-0057-4822-f0fe-08dbbd94664c
+
+Sleeping 10 sec.
+Has been running for ; 1 day(s), 15 hr(s), 57 min and 31.980426 sec.
+
+Reading number  9618
+Sensor: 0 (sensorTankTemp), Sensor ID: 28-0516938152ff Temperature: 39.6 and diff 0.3 (0.8%))
+Sensor: 1 (sensorVpTurTemp), Sensor ID: 28-02189245921a Temperature: 27.4 and diff -0.2 (0.7%))
+Sensor: 2 (sensorVpReturTemp), Sensor ID: 28-021892457738 Temperature: 27.1 and diff -0.1 (0.2%))
+Sensor: 3 (sensorGulvTurTankTemp), Sensor ID: 28-0516938e3cff Temperature: 37.4 and diff -0.2 (0.5%))
+Sensor: 4 (sensorGulvReturTankTemp), Sensor ID: 28-0209924508c6 Temperature: 35.1 and diff -0.7 (2.0%))
+Before subprocess.check_output
+After subprocess.check_output
+Traceback (most recent call last):
+  File "/home/pi/Documents/vp/SmartHouse.py", line 259, in <module>
+    wetherStreamData = json.loads(wetherStreamData)
+  File "/usr/lib/python3.7/json/__init__.py", line 348, in loads
+    return _default_decoder.decode(s)
+  File "/usr/lib/python3.7/json/decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "/usr/lib/python3.7/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+Successfull lookup in https://SmartHouseAPI.slettebakk.com/api/TemperatureSensors 
+HTTPS result : 200 
+HTTP head :
+{'Transfer-Encoding': 'chunked', 'Content-Type': 'application/json; charset=utf-8', 'Server': 'Microsoft-IIS/10.0', 'X-Powered-By': 'ASP.NET', 'Date': 'Tue, 26 Sep 2023 08:35:05 GMT'}
+
+Reading number  1
+Sensor: 0 (sensorTankTemp), Sensor ID: 28-0516938152ff Temperature: 39.6 and diff -312.6 (789.0%))
+Sensor: 1 (sensorVpTurTemp), Sensor ID: 28-02189245921a Temperature: 27.2 and diff -300.2 (1101.8%))
+Sensor: 2 (sensorVpReturTemp), Sensor ID: 28-021892457738 Temperature: 27.1 and diff -300.1 (1106.5%))
+Sensor: 3 (sensorGulvTurTankTemp), Sensor ID: 28-0516938e3cff Temperature: 37.5 and diff -310.5 (828.0%))
+Sensor: 4 (sensorGulvReturTankTemp), Sensor ID: 28-0209924508c6 Temperature: 35.2 and diff -308.2 (875.9%))
+Before subprocess.check_output
+After subprocess.check_output
+Sucsessfully read netatmo indor (23.3) and outdor (13.9) temperature at 2023-09-26 10:31:27.
+Time now is 2023-09-26 10:35:15.237413
+jsonString to POST to API (https://SmartHouseAPI.slettebakk.com/api/TemperatureSensors) endpoint:
+{
+	"sensorTankTimeStamp": "2023-09-26T10:35:09.859390",
+	"sensorTankTemp": 39.625,
+	"sensorVpTurTemp": 27.25,
+	"sensorVpReturTemp": 27.125,
+	"sensorGulvTurTankTemp": 37.5,
+	"sensorGulvReturTankTemp": 35.187,
+	"indorTemperature": 23.3,
+	"outdorTemperature": 13.9
+}
+POST HTTPSResult=201
+URI to Location id=https://smarthouseapi.slettebakk.com/api/TemperatureSensors/b6491b17-c095-4a07-f0ff-08dbbd94664c
+
+Sleeping 10 sec.

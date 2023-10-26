@@ -1,0 +1,133 @@
+{
+    "devices": [
+        {
+            "_id": "70:ee:50:3c:f4:20",
+            "station_name": "Ospestien 51 (Ospestien 51 inne)",
+            "date_setup": 1556983885,
+            "last_setup": 1556983885,
+            "type": "NAMain",
+            "last_status_store": 1689168155,
+            "module_name": "Ospestien 51 inne",
+            "firmware": 201,
+            "last_upgrade": 1556983886,
+            "wifi_status": 61,
+            "reachable": true,
+            "co2_calibrating": false,
+            "data_type": [
+                "Temperature",
+                "CO2",
+                "Humidity",
+                "Noise",
+                "Pressure"
+            ],
+            "place": {
+                "altitude": 90,
+                "city": "Asker",
+                "country": "NO",
+                "timezone": "Europe/Oslo",
+                "location": [
+                    10.4582596,
+                    59.8286559
+                ]
+            },
+            "home_id": "5ecff23b047437059b434584",
+            "home_name": "Ospestien 51",
+            "dashboard_data": {
+                "time_utc": 1689168153,
+                "Temperature": 24.8,
+                "CO2": 492,
+                "Humidity": 50,
+                "Noise": 36,
+                "Pressure": 1001.7,
+                "AbsolutePressure": 991.1,
+                "min_temp": 24.4,
+                "max_temp": 24.9,
+                "date_max_temp": 1689112912,
+                "date_min_temp": 1689130180,
+                "temp_trend": "stable",
+                "pressure_trend": "stable"
+            },
+            "modules": [
+                {
+                    "_id": "02:00:00:3c:ed:4e",
+                    "type": "NAModule1",
+                    "module_name": "Ospestien 51 ute",
+                    "last_setup": 1556983916,
+                    "data_type": [
+                        "Temperature",
+                        "Humidity"
+                    ],
+                    "battery_percent": 40,
+                    "reachable": true,
+                    "firmware": 53,
+                    "last_message": 1689168153,
+                    "last_seen": 1689168140,
+                    "rf_status": 76,
+                    "battery_vp": 4920,
+                    "dashboard_data": {
+                        "time_utc": 1689168140,
+                        "Temperature": 18.9,
+                        "Humidity": 75,
+                        "min_temp": 16.5,
+                        "max_temp": 19.5,
+                        "date_max_temp": 1689161475,
+                        "date_min_temp": 1689112872,
+                        "temp_trend": "stable"
+                    }
+                },
+                {
+                    "_id": "05:00:00:05:95:e0",
+                    "type": "NAModule3",
+                    "module_name": "Regnm\u00e5ler",
+                    "last_setup": 1556986681,
+                    "data_type": [
+                        "Rain"
+                    ],
+                    "battery_percent": 73,
+                    "reachable": true,
+                    "firmware": 14,
+                    "last_message": 1689168153,
+                    "last_seen": 1689168153,
+                    "rf_status": 61,
+                    "battery_vp": 5404,
+                    "dashboard_data": {
+                        "time_utc": 1689168153,
+                        "Rain": 0,
+                        "sum_rain_1": 0.101,
+                        "sum_rain_24": 3
+                    }
+                },
+                {
+                    "_id": "03:00:00:04:75:dc",
+                    "type": "NAModule4",
+                    "module_name": "MasterSoverom",
+                    "last_setup": 1639158199,
+                    "data_type": [
+                        "Temperature",
+                        "CO2",
+                        "Humidity"
+                    ],
+                    "battery_percent": 0,
+                    "reachable": false,
+                    "firmware": 53,
+                    "last_message": 1687840148,
+                    "last_seen": 1687840103,
+                    "rf_status": 65,
+                    "battery_vp": 4200
+                }
+            ]
+        }
+    ],
+    "user": {
+        "mail": "jkslettebakk@yahoo.no",
+        "administrative": {
+            "lang": "nb",
+            "reg_locale": "nb-NO",
+            "country": "NB_NO",
+            "unit": 0,
+            "windunit": 2,
+            "pressureunit": 0,
+            "feel_like_algo": 0
+        }
+    }
+}

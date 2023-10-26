@@ -1,0 +1,31 @@
+#!/bin/sh -e
+#
+# set -x
+#
+# Check if python3 jobs is running
+#
+lookFor=SmartHouse.py
+#
+# ps aux | grep $lookFor | grep grep -v
+#
+var=$(ps aux | grep $lookFor | grep grep -v)
+#
+num=$(echo $var | grep -i -o $lookFor | wc -l)
+#
+delta=120
+#
+Date=$(date +'%Y/%m/%d at %T')
+#
+if [ $num -gt 0 ]
+then
+   echo "$num ($(echo "$var" | while read line; do echo $line | awk -F " " '{print $12 }' ; done)) script[s] running $Date."
+   lastPost=$(curl -s https://smarthouseapi.slettebakk.com/api/TemperatureSensors?number=1 | grep sensorTankTimeStamp | while read line; do echo $line | awk -F '"' '{print $4}' ; done)
+   echo "$lastPost at" $(date +'%Y-%m-%dT%H:%M:%S')
+   lastPostEpoc=$(date -d "${lastPost}" +"%s" )
+   diff=$(($(($lastPostEpoc+$delta)) - $(date +'%s')))
+   # echo "$($lastPostEpoc at " $(date +'%s') " diff = $diff s"
+   if [  $diff -lt 0 ]; then echo Need to reboot. Diff = $diff; else echo reboot not needed; fi;
+else
+   echo "($num) (expected 1) $lookFor scrip running. $Date. Will reboot"
+   sudo reboot
+fi

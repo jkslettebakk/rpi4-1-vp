@@ -1,0 +1,22 @@
+#!/bin/sh -e
+#
+# set -x
+#
+# Check if python3 jobs is running
+#
+var=$(ps -ef | grep python3)
+#
+num=$(echo $var | grep -i -o "\.py\>" | wc -l)
+#
+
+if [ $num -gt 0 ]
+then
+ 
+  echo "$num python3 scripts is running. This is:"
+#  echo "$var" | grep -oP '(?=/Documents/p).*(?=root)'
+#  echo "$var" | grep -oP '(?=/Documents/S).*(?=root)'
+   echo "$var" | while read line; do  echo === $line ===; done
+else
+    echo "No .py is running. Should I reeboot"
+    sudo reboot
+fi

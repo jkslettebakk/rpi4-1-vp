@@ -1,0 +1,4 @@
+My IP3 address is 169.254.201.239 192.168.1.206  after 32 s
+Starting services: python3 /home/pi/Documents/vp.pyCatastrophical error occured in : [6;31;42m https://vp.slettebakk.com/api/TemperatureVP [0m
+
+HTTPSConnectionPool(host='vp.slettebakk.com', port=443): Max retries exceeded with url: /api/TemperatureVP (Caused by NewConnectionError('<urllib3.connection.VerifiedHTTPSConnection object at 0xb5fbcb50>: Failed to establish a new connection: [Errno 113] No route to host'))
