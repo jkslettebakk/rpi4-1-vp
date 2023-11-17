@@ -247,19 +247,13 @@ while True:
     if (writeJsonDataToDatabase):
         # All sensors prosessed and ready to write sensor data... look for and add wheather data
         try:
-            print("Before subprocess.check_output")
+            # print("Before subprocess.check_output")
             wetherStreamData = subprocess.check_output(["python3", "py4netatmo.py"], universal_newlines=True)
-            print("After subprocess.check_output")
+            # print("NetAtmo wether station data from subprocess=",wetherStreamData)
         except wetherStreamData.exceptions as e:
             print('Error in python NetAtmo subprosess: {}. Error message = {}'.format(wetherStreamData,e))
 
-        # remove \n (newline)
-        wetherStreamData = wetherStreamData.rstrip()
-
-        # change from ' to "
-        wetherStreamData = wetherStreamData.replace("'",'"')
-
-        # covert to proper json formatted string
+        # covert from proper json to python3 formatted json
         try:
             wetherStreamData = json.loads(wetherStreamData)
         except wetherStreamData.exceptions as e:
@@ -270,7 +264,6 @@ while True:
         netatmoUtcTime = wetherStreamData["time_utc"]
         inDoorTemperature = wetherStreamData["inhouse"]
         outDoorTemperature = wetherStreamData["outdor"]
-
 
         print("Sucsessfully read netatmo indor ({}) and outdor ({}) temperature at {}.".format(inDoorTemperature, outDoorTemperature, netatmoUtcTime))
         print("Time now is {}".format(datetime.datetime.now()))

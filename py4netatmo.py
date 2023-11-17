@@ -94,6 +94,7 @@ def get_netatmoData():
             response.raise_for_status()
             data = response.json()
             # print("Headers:\n", headers, "\nParams:\n", params, "\nData:\n", data)
+            # print("\nData:\n", data)
             # outdoor_temp = data['body']['devices'][0]['dashboard_data']['Outdoor']['Temperature']
             # outdoor_temp = data["body"]["devices"][0]["modules"][0]["dashboard_data"]["Temperature"]
             return data
@@ -116,6 +117,8 @@ if __name__ == "__main__":
             "inhouse": inhouse_temp,
             "outdor": outdoor_temp
         }
+        # Make inhousAndOutdorResult a proper json string
+        inhousAndOutdorResult = json.dumps(inhousAndOutdorResult)
         print(inhousAndOutdorResult)
     else:
         print("Failed to fetch outdoor temperature.")
