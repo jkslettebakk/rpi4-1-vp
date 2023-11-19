@@ -1,3 +1,4 @@
 # Ignore all .log files
 *.log
+*.log2
 git-token.txt
