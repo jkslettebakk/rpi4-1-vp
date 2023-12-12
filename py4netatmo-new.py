@@ -10,7 +10,7 @@ CLIENT_SECRET = "HvDmwoEBJPfSeQyBUf4XM1fCJu"
 USERNAME = "jkslettebakk@yahoo.no"
 PASSWORD = "Frank#10"
 DEVICE_ID = "70:ee:50:3c:f4:20"
-REFRESH_TOKEN = "5ccdae726b5cc20a008b71e9|3f1d3d96cb43610f31d50e746e085063"  # Replace with your refresh token
+REFRESH_TOKEN = "5ccdae726b5cc20a008b71e9|3e5f7264a1f103125651395602b2ab66"  # Replace with your refresh token
 
 # Netatmo OAuth2 endpoints
 AUTH_URL = "https://api.netatmo.com/oauth2/token"
