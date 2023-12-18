@@ -256,8 +256,8 @@ while True:
         # covert from proper json to python3 formatted json
         try:
             wetherStreamData = json.loads(wetherStreamData)
-        except wetherStreamData.exceptions as e:
-            print('Error in python Json structuring: {}. Error message = {}'.format(wetherStreamData,e))
+        except Exception as e:
+            print('Error in python Json structuring: {}. Error message = {}'.format(type(e).__name__, e))
             print("Prepared json data to database\n{}".format(wetherStreamData)) # migt need to do a 'try {}' session
 
         # Reading last netAtmo data elements

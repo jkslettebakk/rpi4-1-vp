@@ -28,7 +28,8 @@ reading_numbers = 1  # Counter for total number of sensor/data polls
 NetAtmoPy = "/home/pi/Documents/py4netatmo.py"
 SmartHousePy = "/home/pi/Documents/SmartHouse.py"
 SmartHouseApiUrl = 'https://SmartHouseAPI.slettebakk.com/api/TemperatureSensors'
-logInformation = False  # set to True if you want extended logging
+logInformation = False  # set to True if you want extended logging; NB! Dont run for long wit output to file. A lot of data will be stored 
+logJsonInformation = True  # set to True if you want extended logging; NB! Dont run for long wit output to file. A lot of data will be stored 
 resultJsonFile = "/home/pi/Documents/netAtmoResult.json"
 #
 ''' sample JSON structure for POST back to REST API and further to database
@@ -106,7 +107,8 @@ except requests.exceptions.RequestException as e:
     # catastrophic error. bail.
     print('Catastrophical error occured in : \x1b[6;31;42m', SmartHouseApiUrl, '\x1b[0m\n')
     print(e)
-    exit()
+    os.system("sudo reboot")
+    # exit()
 
 
 # OK, HTTPS call is ok, but is it 200
@@ -227,13 +229,15 @@ while True:
                 print(reading_values[reading_sensor])
                 reading_sensor = reading_sensor + 1
             else:
-                print('Error in prosessing sensors:\n', e)
-                # Could i restart?
-                exit()
+                print('Error in prosessing sensors. calling os.system()\n')
+                # Could/should i restart?
+                # exit()
+                os.system("sudo reboot")
         except:
-            print('Error in try: sensor data extract:\n', e)
-            # Could i restart? I need to learn based upon crashes, but for now I use exit()
-            exit()
+            print('Error in try: sensor data extract. calling os.system()\n', e)
+            # Could/should I restart? I need to learn based upon crashes, but for now I use exit()
+            # exit()
+            os.system("sudo reboot")
 
     if (logInformation):
         for i in range(sensors):
@@ -243,26 +247,23 @@ while True:
     if (writeJsonDataToDatabase):
         # All sensors prosessed and ready to write sensor data... look for and add wheather data
         try:
-            print("Before subprocess.check_output")
+            # print("Before subprocess.check_output")
             wetherStreamData = subprocess.check_output(["python3", "py4netatmo.py"], universal_newlines=True)
-            print("After subprocess.check_output")
+            # print("NetAtmo wether station data from subprocess=",wetherStreamData)
         except wetherStreamData.exceptions as e:
             print('Error in python NetAtmo subprosess: {}. Error message = {}'.format(wetherStreamData,e))
 
-        # remove \n (newline)
-        wetherStreamData = wetherStreamData.rstrip()
-
-        # change from ' to "
-        wetherStreamData = wetherStreamData.replace("'",'"')
-
-        # covert to proper json formatted string
-        wetherStreamData = json.loads(wetherStreamData)
+        # covert from proper json to python3 formatted json
+        try:
+            wetherStreamData = json.loads(wetherStreamData)
+        except wetherStreamData.exceptions as e:
+            print('Error in python Json structuring: {}. Error message = {}'.format(wetherStreamData,e))
+            print("Prepared json data to database\n{}".format(wetherStreamData)) # migt need to do a 'try {}' session
 
         # Reading last netAtmo data elements
         netatmoUtcTime = wetherStreamData["time_utc"]
         inDoorTemperature = wetherStreamData["inhouse"]
         outDoorTemperature = wetherStreamData["outdor"]
-
 
         print("Sucsessfully read netatmo indor ({}) and outdor ({}) temperature at {}.".format(inDoorTemperature, outDoorTemperature, netatmoUtcTime))
         print("Time now is {}".format(datetime.datetime.now()))
@@ -291,12 +292,11 @@ while True:
         except requests.exceptions.RequestException as e:
             # catastrophic error. bail.
             print(
-                'catastrophic error. bail on url: \x1b[6;30;41m', SmartHouseApiUrl, '\x1b[0m')
-            print(e)
+                'Catastrophic failure. Bailout on url: \x1b[6;30;41m', SmartHouseApiUrl,'\n', jsonString, '\x1b[0m')
             error = '\nSom error occured at {0} and the content is:\n {1}\n'.format(
                 datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), e)
             print(error)
-            f = open('SmartHouse.log', 'a')
+            f = open('SmartHouse.log2', 'a')
             f.write(error)
             f.close()
             # exit()
