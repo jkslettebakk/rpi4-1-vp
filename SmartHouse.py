@@ -261,13 +261,16 @@ while True:
             print("Prepared json data to database\n{}".format(wetherStreamData)) # migt need to do a 'try {}' session
 
         # Reading last netAtmo data elements
-        netatmoUtcTime = wetherStreamData["time_utc"]
-        inDoorTemperature = wetherStreamData["inhouse"]
-        outDoorTemperature = wetherStreamData["outdor"]
-
-        print("Sucsessfully read netatmo indor ({}) and outdor ({}) temperature at {}.".format(inDoorTemperature, outDoorTemperature, netatmoUtcTime))
-        print("Time now is {}".format(datetime.datetime.now()))
-
+        try:
+            netatmoUtcTime = wetherStreamData["time_utc"]
+            inDoorTemperature = wetherStreamData["inhouse"]
+            outDoorTemperature = wetherStreamData["outdor"]
+            print("Sucsessfully read netatmo indor ({}) and outdor ({}) temperature at {}.".format(inDoorTemperature, outDoorTemperature, netatmoUtcTime))
+            print("Time now is {}".format(datetime.datetime.now()))
+        except Exception as e:
+            print('Error in python Json structuring: {}. Error message = {}'.format(type(e).__name__, e))
+            print("Prepared json data to database\n{}".format(wetherStreamData)) # migt need to do a 'try {}' session
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
         jsonString = jsonString + \
             ',\n\t\"{0}\": {1}'.format(
                 "indorTemperature", inDoorTemperature)
