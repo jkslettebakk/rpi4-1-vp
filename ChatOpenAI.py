@@ -1,48 +1,53 @@
-import glob
 import time
+import requests
+import glob
+import os
 
-def find_ds18b20_sensors():
-    # Use glob to find all DS18B20 sensor paths
-    return glob.glob("/sys/bus/w1/devices/28-*")
-
-def read_temperature(sensor_path):
+# Function to read temperature from a single DS18B20 sensor
+def read_temp(sensor_id):
     try:
-        # Read temperature from the sensor file
-        with open(sensor_path + "/w1_slave", "r") as sensor_file:
-            lines = sensor_file.readlines()
-            # Extract temperature from the second line
-            temperature_str = lines[1].split(" ")[9]
-            temperature = float(temperature_str[2:]) / 1000.0
-            return temperature
+        base_dir = '/sys/bus/w1/devices/'
+        device_folder = glob.glob(base_dir + sensor_id)[0]
+        device_file = device_folder + '/w1_slave'
+        with open(device_file, 'r') as f:
+            lines = f.readlines()
+            while lines[0].strip()[-3:] != 'YES':
+                time.sleep(0.2)
+                lines = f.readlines()
+            equals_pos = lines[1].find('t=')
+            if equals_pos != -1:
+                temp_string = lines[1][equals_pos+2:]
+                temp_c = float(temp_string) / 1000.0
+                return temp_c
     except Exception as e:
-        print(f"Error reading temperature from {sensor_path}: {e}")
+        print(f"Error reading sensor {sensor_id}: {e}")
         return None
 
-def read_temperatures(loopNr, sensor_paths):
-    try:
-        print(f"Reading {loopNr} results:")
-        for sensor_path in sensor_paths:
-            # Extract the sensor ID from the path
-            sensor_id = sensor_path.split("/")[-1]
-            temperature = read_temperature(sensor_path)
+# Main loop
+def main():
+    sensor_ids = ['28-0209924508c6', '28-021892457738', '28-02189245921a', '28-0516938152ff', '28-0516938e3cff'] # Replace with your actual sensor IDs
 
-            if temperature is not None:
-                # Print the temperature
-                print(f"Sensor {sensor_id} Temperature: {temperature:.2f} °C")
+    while True:
+        readings = []
+        response = []
+        for sensor_id in sensor_ids:
+            temp = read_temp(sensor_id)
+            if temp is not None:
+                readings.append({'sensor_id': sensor_id, 'temperature': temp})
 
-    except Exception as e:
-        print(f"Error reading temperatures: {e}")
+        # Post readings to API
+        if readings:
+            try:
+                tmpJson=json=readings
+                # response = requests.post('https://SmartHouseAPI.slettebakk.com/api/TemperatureSensors',
+                #                          json=readings)
+                response.append({'text' : 'OK'})
+                print(f"Data posted successfully: {response[0].text}")
+            except requests.exceptions.RequestException as e:
+                print(f"Failed to post data: {e}")
+                print(f"Json result = {tmpJson}")
+        
+        time.sleep(10) # Sleep for 10 seconds
 
 if __name__ == "__main__":
-    try:
-        # Find all DS18B20 sensors
-        sensor_paths = find_ds18b20_sensors()
-        i = 0
-
-        # Continue reading temperatures
-        while True:
-            i += 1; read_temperatures(i, sensor_paths)
-            time.sleep(5)  # Adjust the delay as needed
-
-    except KeyboardInterrupt:
-        print("Program terminated by user.")
+    main()

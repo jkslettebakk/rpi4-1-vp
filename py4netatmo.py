@@ -3,122 +3,87 @@ import json
 from datetime import datetime, timedelta
 from time import strftime, localtime
 
-# Replace these with your own client_id and client_secret
-# Replace these with your own client_id and client_secret
-CLIENT_ID = "6506e1ce5765a18a1b081431"
-CLIENT_SECRET = "HvDmwoEBJPfSeQyBUf4XM1fCJu"
-USERNAME = "jkslettebakk@yahoo.no"
-PASSWORD = "Frank#10"
-DEVICE_ID = "70:ee:50:3c:f4:20"
-REFRESH_TOKEN = "5ccdae726b5cc20a008b71e9|3e5f7264a1f103125651395602b2ab66"  # Replace with your refresh token
+def load_secrets(file_path='netatmo_secrets.json'):
+    with open(file_path, 'r') as file:
+        return json.load(file)
+
+secrets = load_secrets()
 
 # Netatmo OAuth2 endpoints
 AUTH_URL = "https://api.netatmo.com/oauth2/token"
 API_URL = "https://api.netatmo.com/api/getstationsdata"
 
+# Global variables for token management
 access_token = None
-token_expiration_time = None
+token_expiration_time = datetime.min
 
-# Authenticate and get an access token
-def get_access_token():
+def authenticate():
+    """Authenticate with Netatmo and manage access token."""
     global access_token, token_expiration_time
+    if datetime.now() < token_expiration_time:
+        return
 
-    auth_payload = {
-        "grant_type": "password",
-        "client_id": CLIENT_ID,
-        "client_secret": CLIENT_SECRET,
-        "username": USERNAME,
-        "password": PASSWORD,
-        "scope": "read_station"
-    }
-
-    try:
-        response = requests.post(AUTH_URL, data=auth_payload)
-        response.raise_for_status()
-        data = response.json()
-        access_token = data["access_token"]
-        expires_in = data["expires_in"]
-        token_expiration_time = datetime.now() + timedelta(seconds=expires_in)
-        return access_token
-    except requests.exceptions.RequestException as e:
-        print(f"Autentication Error: {e}")
-        return None
-    except json.JSONDecodeError as e:
-        print(f"Error decoding JSON response: {e}")
-        return None
-
-# Refresh the access token using the refresh token
-def refresh_access_token():
-    global access_token, token_expiration_time
-
-    refresh_payload = {
-        "grant_type": "refresh_token",
-        "client_id": CLIENT_ID,
-        "client_secret": CLIENT_SECRET,
-        "refresh_token": REFRESH_TOKEN
-    }
-
-    try:
-        response = requests.post(AUTH_URL, data=refresh_payload)
-        response.raise_for_status()
-        data = response.json()
-        access_token = data["access_token"]
-        expires_in = data["expires_in"]
-        token_expiration_time = datetime.now() + timedelta(seconds=expires_in)
-        return access_token
-    except requests.exceptions.RequestException as e:
-        print(f"Refresh Access Token Error: {e}")
-        return None
-    except json.JSONDecodeError as e:
-        print(f"Error decoding JSON response: {e}")
-        return None
-
-# Fetch outdoor temperature
-def get_netatmoData():
-    global access_token, token_expiration_time
-
-    if access_token is None or datetime.now() > token_expiration_time:
-        access_token = refresh_access_token()
-
-    if access_token:
-        headers = {
-            "Authorization": f"Bearer {access_token}"
+    if secrets["REFRESH_TOKEN"]:
+        payload = {
+            "grant_type": "refresh_token",
+            "refresh_token": secrets["REFRESH_TOKEN"],
+            "client_id": secrets["CLIENT_ID"],
+            "client_secret": secrets["CLIENT_SECRET"]
+        }
+    else:
+        payload = {
+            "grant_type": "authorization_code",
+            "code": secrets["AUTHORIZATION_CODE"],
+            "redirect_uri": secrets["REDIRECT_URI"],
+            "client_id": secrets["CLIENT_ID"],
+            "client_secret": secrets["CLIENT_SECRET"]
         }
 
-        params = {
-            "device_id": DEVICE_ID  # Replace with your device ID
-        }
+    response = requests.post(AUTH_URL, data=payload)
+    if response.status_code == 200:
+        data = response.json()
+        access_token = data["access_token"]
+        secrets["REFRESH_TOKEN"] = data.get("refresh_token", secrets["REFRESH_TOKEN"])
+        token_expiration_time = datetime.now() + timedelta(seconds=data["expires_in"])
+        # Update the secrets file with the new refresh token
+        with open('netatmo_secrets.json', 'w') as file:
+            json.dump(secrets, file, indent=4)
+    else:
+        raise Exception(f"Failed to authenticate: {response.text}")
 
-        try:
-            response = requests.get(API_URL, headers=headers, params=params)
-            response.raise_for_status()
-            data = response.json()
-            # print("Headers:\n", headers, "\nParams:\n", params, "\nData:\n", data)
-            # print("\nData:\n", data)
-            # outdoor_temp = data['body']['devices'][0]['dashboard_data']['Outdoor']['Temperature']
-            # outdoor_temp = data["body"]["devices"][0]["modules"][0]["dashboard_data"]["Temperature"]
-            return data
-        except requests.exceptions.RequestException as e:
-            print(f"Get outdoor temperature Error: {e}")
-            return None
-        except json.JSONDecodeError as e:
-            print(f"Error decoding JSON response: {e}")
-            return None
+def fetch_netatmo_data():
+    """Fetch data from Netatmo using the access token."""
+    authenticate()
+    headers = {"Authorization": f"Bearer {access_token}"}
+    params = {"device_id": secrets['DEVICE_ID']}
+    response = requests.get(API_URL, headers=headers, params=params)
+    if response.status_code != 200:
+        raise Exception(f"Failed to fetch data: {response.text}")
+    return response.json()
+
+def OutputDataForVPApp(data):
+    outdorTimestamp = data["body"]["devices"][0]["modules"][0]["dashboard_data"]["time_utc"]
+    outdoor_temp = data["body"]["devices"][0]["modules"][0]["dashboard_data"]["Temperature"]
+    inhouse_temp = data["body"]["devices"][0]["dashboard_data"]["Temperature"]
+    inhousAndOutdorResult = {
+        "time_utc": strftime('%Y-%m-%d %H:%M:%S', localtime(outdorTimestamp)),
+        "inhouse": inhouse_temp,
+        "outdor": outdoor_temp
+    }
+    # Make inhousAndOutdorResult a proper json string
+    inhousAndOutdorResult = json.dumps(inhousAndOutdorResult)
+    print(inhousAndOutdorResult)
+
+
+def main():
+    try:
+        data = fetch_netatmo_data()
+        # Add your data handling logic here
+        OutputDataForVPApp(data)
+        # print(data)
+    except Exception as e:
+        print(f"Error: {e}")
 
 if __name__ == "__main__":
-    netatmoData = get_netatmoData()
+    main()
 
-    if netatmoData is not None:
-        outdorTimestamp = netatmoData["body"]["devices"][0]["modules"][0]["dashboard_data"]["time_utc"]
-        outdoor_temp = netatmoData["body"]["devices"][0]["modules"][0]["dashboard_data"]["Temperature"]
-        inhouse_temp = netatmoData["body"]["devices"][0]["dashboard_data"]["Temperature"]
-        inhousAndOutdorResult = {
-            "time_utc": strftime('%Y-%m-%d %H:%M:%S', localtime(outdorTimestamp)),
-            "inhouse": inhouse_temp,
-            "outdor": outdoor_temp
-        }
-        # Make inhousAndOutdorResult a proper json string
-        inhousAndOutdorResult = json.dumps(inhousAndOutdorResult)
-        print(inhousAndOutdorResult)
-    else:
-        print("Failed to fetch outdoor temperature.")

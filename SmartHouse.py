@@ -168,8 +168,7 @@ while True:
         time.time()).strftime('%Y-%m-%dT%H:%M:%S.%f')
     jsonString = '{\n' + '\t\"' + \
         sensorNames[reading_sensor] + '\": "' + timePolled + '\"'
-
-    print('\nReading number ', reading_numbers)
+    print("\nReading number {}".format(reading_numbers))
 
 # looping for all sensors every 10 seconds
     for sensor in glob.glob("/sys/bus/w1/devices/28-*/w1_slave"):
@@ -243,6 +242,7 @@ while True:
         for i in range(sensors):
             print('i=', i, 'values=', reading_values[i], ' High:',
                     max_temp_sensor[i], ' and low:', min_temp_sensor[i])
+
 # ready to get netatmo data
     if (writeJsonDataToDatabase):
         # All sensors prosessed and ready to write sensor data... look for and add wheather data
