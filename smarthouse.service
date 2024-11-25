@@ -1,0 +1,16 @@
+[Unit]
+Description=SmartHouse Service
+# After=network-online.target
+After=multi-user.target
+
+[Service]
+User=pi
+ExecStart=/usr/bin/python3 /home/pi/Documents/vp/SmartHouse.py
+WorkingDirectory=/home/pi/Documents/vp
+Restart=always
+StandardOutput=append:/home/pi/Documents/vp/SmartHouse.log
+StandardError=append:/home/pi/Documents/vp/SmartHouseError.log
+
+[Install]
+WantedBy=multi-user.target
+
